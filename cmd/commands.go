@@ -2,12 +2,16 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strings"
 
 	"github.com/pramananadasarkar02/leetcode-local-cli/config"
 	"github.com/pramananadasarkar02/leetcode-local-cli/pkg/leetcode"
+
+	htmltomarkdown "github.com/JohannesKaufmann/html-to-markdown/v2"
 )
+
 
 
 
@@ -50,13 +54,31 @@ func FetchRandomProblem(client *leetcode.Client, cfg *config.Config) error {
 }
 
 func saveQuestion(q *leetcode.Question, cfg *config.Config) error {
+	
+	// 
+	markdown, err := htmltomarkdown.ConvertString(q.Content)
+	if err != nil{
+		log.Fatal(err)
+
+	}
+	// fmt.Println(markdown)
+
+
 	content := cleanHTML(q.Content)
 	finalContent := fmt.Sprintf("Title: %s\nDifficulty: %s\n\nDescription:\n%s",
 		q.Title,
 		q.Difficulty,
 		content,
 	)
-	return os.WriteFile(cfg.OutputFileName, []byte(finalContent), 0644)
+	finalContent = markdown
+	var fileName string
+	if cfg.OutputFileName == ""{
+		fileName = q.Title + ".md"
+	} else{
+		fileName = cfg.OutputFileName
+	}
+	return os.WriteFile(fileName, []byte(finalContent), 0644)
+
 }
 
 func cleanHTML(content string) string {

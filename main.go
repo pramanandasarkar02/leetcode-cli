@@ -57,8 +57,12 @@ func main(){
 		os.Exit(1)
 	}
 
-	fmt.Printf("Problem saved to %s\n", cfg.OutputFileName)
+	
 
+
+	
+
+	
 
 
 
